@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>GWELDIG AI - Studio</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="scrim" id="scrim" aria-hidden="true"></div>
+        <aside class="sidebar" id="sidebar" aria-label="Panel samping">
+            <div class="sidebar-top">
+                <div class="brand">
+                    <img src="logo.png" alt="" class="brand-mark" width="32" height="32">
+                    <div class="brand-text">
+                        <p class="brand-name">GWELDIG AI</p>
+                        <p class="brand-sub">Studio AI</p>
+                    </div>
+                </div>
+                <div class="sidebar-actions">
+                    <button class="icon-btn" id="theme-toggle" type="button" aria-label="Ubah tema"></button>
+                    <button class="icon-btn mobile-only" id="close-sidebar" type="button" aria-label="Tutup menu">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <button class="primary-btn" id="new-chat-btn" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span>Percakapan baru</span>
+            </button>
+
+            <label class="search-field" for="search-input">
+                <span class="sr-only">Telusuri percakapan</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <input type="search" id="search-input" placeholder="Telusuri percakapan">
+            </label>
+
+            <section class="sidebar-section">
+                <h2 class="section-title">Riwayat</h2>
+                <ul id="project-history" class="history-list"></ul>
+            </section>
+
+            <section class="sidebar-section tasks-section">
+                <h2 class="section-title">Daftar Tugas</h2>
+                <form class="task-form" id="task-form">
+                    <label class="sr-only" for="task-input">Tugas baru</label>
+                    <input type="text" id="task-input" placeholder="Tambah tugas">
+                    <button class="secondary-btn" type="submit">Tambah</button>
+                </form>
+                <ul id="task-list" class="task-list"></ul>
+            </section>
+        </aside>
+
+        <main class="stage" id="main-workspace">
+            <header class="stage-header">
+                <div class="stage-left">
+                    <button class="icon-btn mobile-only" id="open-sidebar" type="button" aria-label="Buka menu">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </button>
+                    <div>
+                        <p class="stage-kicker">Gweldig Studio</p>
+                        <h1 class="stage-title" id="active-project-title">Percakapan baru</h1>
+                    </div>
+                </div>
+                <button class="ghost-btn" id="clear-btn" type="button">Bersihkan sesi</button>
+            </header>
+
+            <div id="workspace-content" class="messages" aria-live="polite"></div>
+
+            <section class="composer" aria-label="Kirim pesan">
+                <div id="attachment-tray" class="attachment-tray" aria-live="polite"></div>
+                <form id="composer-form" class="composer-form">
+                    <div class="composer-box">
+                        <textarea id="user-input" placeholder="Tulis pesan atau lampirkan file untuk dianalisis..." rows="1"></textarea>
+                        <div class="composer-toolbar">
+                            <div class="composer-tools">
+                                <label class="tool-btn" for="file-input" title="Lampirkan foto atau file">
+                                    <span class="sr-only">Lampirkan foto atau file</span>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 13.5l6.8-6.8a3 3 0 114.2 4.2L10.4 18.5a4.5 4.5 0 11-6.4-6.4l7.6-7.6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </label>
+                                <input id="file-input" type="file" multiple hidden accept="image/*,.pdf,.txt,.md,.csv,.json,.xml,.js,.ts,.py,.java,.c,.cpp,.html,.css,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                                <label class="sr-only" for="model-select">Model</label>
+                                <select id="model-select" class="model-pill" aria-label="Pilih model"></select>
+                                <div class="variant-pills" id="variant-group" role="radiogroup" aria-label="Varian respons">
+                                    <button type="button" class="variant-pill" data-variant="low" role="radio" aria-checked="false">Rendah</button>
+                                    <button type="button" class="variant-pill active" data-variant="medium" role="radio" aria-checked="true">Sedang</button>
+                                    <button type="button" class="variant-pill" data-variant="high" role="radio" aria-checked="false">Tinggi</button>
+                                </div>
+                            </div>
+                            <button id="send-btn" class="send-btn" type="submit" aria-label="Kirim pesan">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <p class="composer-hint" id="composer-hint">Enter untuk kirim, Shift+Enter untuk baris baru.</p>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
