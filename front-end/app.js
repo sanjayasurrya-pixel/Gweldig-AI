@@ -11,7 +11,7 @@ const API_URL = (function () {
   if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:") {
     return "http://127.0.0.1:8000";
   }
-  return window.GWELDIG_API_URL || "";
+  return window.GWELDIG_API_URL || "https://back-end-one-psi.vercel.app";
 })();
 
 const VARIANTS = {
