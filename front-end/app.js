@@ -1,4 +1,18 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = (function () {
+  const params = new URLSearchParams(location.search);
+  const fromQuery = params.get("api");
+  if (fromQuery) {
+    const clean = fromQuery.replace(/\/$/, "");
+    localStorage.setItem("gweldig_api_url", clean);
+    return clean;
+  }
+  const stored = localStorage.getItem("gweldig_api_url");
+  if (stored) return stored.replace(/\/$/, "");
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:") {
+    return "http://127.0.0.1:8000";
+  }
+  return window.GWELDIG_API_URL || "";
+})();
 
 const VARIANTS = {
   low: { temperature: 0.3, max_output_tokens: 1024, top_p: 0.8 },
@@ -536,7 +550,11 @@ async function sendMessage() {
     }
   } catch {
     loadingRow.remove();
-    appendMessage("assistant", "Tidak dapat terhubung ke server. Pastikan backend aktif di http://127.0.0.1:8000.");
+    if (!API_URL) {
+      appendMessage("assistant", "Server belum dikonfigurasi untuk perangkat ini. Atur URL backend dengan membuka halaman ini memakai parameter `?api=https://alamat-backend-anda`, lalu coba lagi.");
+    } else {
+      appendMessage("assistant", `Tidak dapat terhubung ke server (${API_URL}). Pastikan backend aktif dan dapat diakses dari perangkat ini.`);
+    }
   } finally {
     state.sending = false;
     els.send.disabled = false;
